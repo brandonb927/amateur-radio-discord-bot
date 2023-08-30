@@ -2,7 +2,11 @@
   "token": "BOT_TOKEN",
   "bot_name": "APRS Bot",
   "prefix": "?",
-  "aprs_token": "APRS_API_TOKEN",
+  "aprs_fi_token": "APRS_API_TOKEN",
+  "aprs_is_callsign": "callsign",
+  "aprs_is_passcode": 12345,
+  "aprs_is_server": "rotate.aprs2.net",
+  "aprs_is_server_port": 14580,
   "gmaps_token": "GMAPS_API_TOKEN",
   "timezone": "America/Chicago",
   "embed_color": "#FFFFFF"

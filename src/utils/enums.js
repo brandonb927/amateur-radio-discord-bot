@@ -10,4 +10,4 @@ export const DATE_OPTIONS = {
   timeZone: config.timezone,
 };
 
-export const UNAVAILABLE = 'Unavailable';
+export const APRS_FI_BASE_URL = 'https://api.aprs.fi/api/';

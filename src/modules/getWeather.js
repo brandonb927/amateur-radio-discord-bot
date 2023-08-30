@@ -1,16 +1,24 @@
-import { EmbedBuilder } from 'discord.js';
+import Discord from 'discord.js';
 import got from '../utils/got.js';
 import config from '../utils/loadConfig.js';
-import { DATE_OPTIONS } from '../utils/enums.js';
+import { APRS_FI_BASE_URL, DATE_OPTIONS } from '../utils/enums.js';
 
+/**
+ * Gets weather information for a given callsign
+ *
+ * @param {string} callsign
+ * @param {Discord.Message} message
+ */
 export async function getWeather(callsign, message) {
   if (!callsign) {
-    return message.channel.send("Hmm, Looks like you didn't provide a callsign. Try again!");
+    return message.reply("Hmm, looks like you didn't provide a callsign. Try again!");
   }
 
   try {
     const data = await got
-      .get(`get?name=${callsign}&what=wx&apikey=${config.aprs_token}&format=json`)
+      .get(
+        `${APRS_FI_BASE_URL}/get?name=${callsign}&what=wx&apikey=${config.aprs_fi_token}&format=json`
+      )
       .json();
 
     if (!data.found) {
@@ -31,6 +39,7 @@ export async function getWeather(callsign, message) {
       let timeUpdated = new Date(data.entries[0].time * 1000);
       let lastUpdated = new Date(data.entries[0].lasttime * 1000);
       let miniMapUrl = `http://www.findu.com/cgi-bin/radar-find.cgi?call=${callsign}`;
+
       const fields = [
         temp && { name: 'Temp', value: temp },
         pressure && { name: 'Pressure', value: pressure },
@@ -51,9 +60,10 @@ export async function getWeather(callsign, message) {
           value: lastUpdated.toLocaleString('en-US', DATE_OPTIONS),
         },
       ].filter(Boolean);
+
       message.channel.send({
         embeds: [
-          new EmbedBuilder()
+          new Discord.EmbedBuilder()
             .setColor(config.embed_color)
             .addFields(fields)
             .setImage(miniMapUrl)

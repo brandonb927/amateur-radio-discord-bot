@@ -1,16 +1,24 @@
-import { EmbedBuilder } from 'discord.js';
+import Discord from 'discord.js';
 import got from '../utils/got.js';
 import config from '../utils/loadConfig.js';
-import { DATE_OPTIONS } from '../utils/enums.js';
+import { APRS_FI_BASE_URL, DATE_OPTIONS } from '../utils/enums.js';
 
+/**
+ * Gets location information for a given callsign
+ *
+ * @param {string} callsign
+ * @param {Discord.Message} message
+ */
 export async function getLocationInfo(callsign, message) {
   if (!callsign) {
-    return message.channel.send("Hmm, Looks like you didn't provide a callsign. Try again!");
+    return message.reply("Hmm, looks like you didn't provide a callsign. Try again!");
   }
 
   try {
     const data = await got
-      .get(`get?name=${callsign}&what=loc&apikey=${config.aprs_token}&format=json`)
+      .get(
+        `${APRS_FI_BASE_URL}/get?name=${callsign}&what=loc&apikey=${config.aprs_fi_token}&format=json`
+      )
       .json();
 
     if (!data.found) {
@@ -45,9 +53,9 @@ export async function getLocationInfo(callsign, message) {
           value: `https://www.google.com/maps/search/?api=1&query=${coords}`,
         },
       ].filter(Boolean);
-      message.channel.send({
+      message.channel.reply({
         embeds: [
-          new EmbedBuilder()
+          new Discord.EmbedBuilder()
             .setColor(config.embed_color)
             .addFields(fields)
             .setImage(miniMapUrl)
