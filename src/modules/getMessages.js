@@ -1,16 +1,18 @@
 import { EmbedBuilder } from 'discord.js';
 import { DATE_OPTIONS } from '../utils/enums.js';
-import got from '../utils/got.js';
 import config from '../utils/loadConfig.js';
-import { getCallsignTrackingUrl } from '../utils/getCallsignTrackingUrl.js';
+import client from '../utils/http/aprs-fi.js';
+import { getAprsFiCallsignTrackingUrl } from '../utils/getAprsFiCallsignTrackingUrl.js';
 
-export async function getMessages(callsign, message) {
+export async function getMessages(args, message) {
+  const [callsign] = args;
+
   if (!callsign) {
     return message.channel.send("Hmm, Looks like you didn't provide a callsign. Try again!");
   }
 
   try {
-    const data = await got
+    const data = await client
       .get(`get?what=msg&dst=${callsign}&apikey=${config.aprs_token}&format=json`)
       .json();
 
@@ -27,7 +29,7 @@ export async function getMessages(callsign, message) {
         const time = new Date(aprsMessage.time * 1000);
 
         content += `
-**Source Call:** [${srcCall}](${getCallsignTrackingUrl(srcCall)})
+**Source Call:** [${srcCall}](${getAprsFiCallsignTrackingUrl(srcCall)})
 **Message:** ${msg}
 **Time:** ${time.toLocaleString('en-US', DATE_OPTIONS)}
 `;
