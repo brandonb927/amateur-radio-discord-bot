@@ -28,7 +28,7 @@ if (fsExtra.existsSync(jsonFile)) {
     embed_color: getEnv('BOT_EMBED_COLOR', '#efefef'),
     user_agent: getEnv(
       'BOT_USER_AGENT',
-      'aprs-discord-bot v1 (+https://github.com/brandonb927/aprs-discord-bot)'
+      'amateur-radio-discord-bot v1 (+https://github.com/brandonb927/amateur-radio-discord-bot)'
     ),
   };
 }

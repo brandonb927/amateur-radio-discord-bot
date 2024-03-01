@@ -10,6 +10,8 @@ import config from './utils/loadConfig.js';
 import { getMessages } from './modules/getMessages.js';
 import { getLocationInfo } from './modules/getLocationInfo.js';
 import { getWeather } from './modules/getWeather.js';
+import { getSota } from './modules/getSota.js';
+import { getPota } from './modules/getPota.js';
 
 const client = new Client({
   intents: [
@@ -39,33 +41,44 @@ client.on(Events.ClientReady, async () => {
   client.user.setActivity('Stations', { type: ActivityType.Watching });
 });
 
-client.on(Events.MessageCreate, (message) => {
+client.on(Events.MessageCreate, async (message) => {
   // Prevent botception!
   if (!message.content.startsWith(config.prefix) || message.author.bot) return;
 
   const args = message.content.slice(config.prefix.length).trim().split(/\s+/g);
   const command = args.shift().toLowerCase();
-  let callsign;
   switch (command) {
+    case 'location':
     case 'loc':
-      callsign = args[0];
-      getLocationInfo(callsign, message);
+      getLocationInfo(args, message);
       break;
     case 'messages':
-      callsign = args[0];
-      getMessages(callsign, message);
+    case 'msg':
+      getMessages(args, message);
+      break;
+    case 'sota':
+      await getSota(args, message);
+      break;
+    case 'pota':
+      await getPota(args, message);
       break;
     case 'weather':
     case 'wx':
-      callsign = args[0];
-      getWeather(callsign, message);
+      getWeather(args, message);
       break;
     case 'help':
       message.channel.send(
         `**Currently available commands**:
-\`${config.prefix}loc callsign\` to retrieve location information.
-\`${config.prefix}msg callsign\` to retrieve ten latest messages for given recipient.
-\`${config.prefix}wx callsign\` to retrieve weather data.`
+\`${config.prefix}loc callsign\` (alias for \`location\`)
+\`${config.prefix}location callsign\` to retrieve location information.
+\`${config.prefix}msg callsign\` (alias for \`messages\`).
+\`${config.prefix}messages callsign\` to retrieve ten latest messages for given recipient.
+\`${config.prefix}pota spots\` to retrieve recent Parks on the Air summit spots.
+[not yet implemented] \`${config.prefix}pota activations\` to retrieve Parks on the Air upcoming activations.
+\`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
+[not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.
+\`${config.prefix}wx callsign\` (alias for \`weather\`)
+\`${config.prefix}weather callsign\` to retrieve weather data.`
       );
       break;
     default:

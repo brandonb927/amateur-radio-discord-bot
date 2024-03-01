@@ -1,17 +1,19 @@
 import { EmbedBuilder } from 'discord.js';
 import { DATE_OPTIONS } from '../utils/enums.js';
-import { getCallsignTrackingUrl } from '../utils/getCallsignTrackingUrl.js';
+import { getAprsFiCallsignTrackingUrl } from '../utils/getAprsFiCallsignTrackingUrl.js';
 import { getIconURLFromSymbol } from '../utils/getIconFromsymbol.js';
-import got from '../utils/got.js';
+import client from '../utils/http/aprs-fi.js';
 import config from '../utils/loadConfig.js';
 
-export async function getLocationInfo(callsign, message) {
+export async function getLocationInfo(args, message) {
+  const [callsign] = args;
+
   if (!callsign) {
     return message.channel.send("Hmm, Looks like you didn't provide a callsign. Try again!");
   }
 
   try {
-    const data = await got
+    const data = await client
       .get(`get?what=loc&name=${callsign}&apikey=${config.aprs_token}&format=json`)
       .json();
 
@@ -55,7 +57,7 @@ export async function getLocationInfo(callsign, message) {
         },
         {
           name: 'Track on APRS.fi',
-          value: `${getCallsignTrackingUrl(callsign)}`,
+          value: `${getAprsFiCallsignTrackingUrl(callsign)}`,
         },
       ].filter(Boolean);
 

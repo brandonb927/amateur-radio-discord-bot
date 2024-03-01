@@ -1,15 +1,17 @@
 import { EmbedBuilder } from 'discord.js';
 import { DATE_OPTIONS } from '../utils/enums.js';
-import got from '../utils/got.js';
+import client from '../utils/http/aprs-fi.js';
 import config from '../utils/loadConfig.js';
 
-export async function getWeather(callsign, message) {
+export async function getWeather(args, message) {
+  const [callsign] = args;
+
   if (!callsign) {
     return message.reply("Hmm, Looks like you didn't provide a callsign. Try again!");
   }
 
   try {
-    const data = await got
+    const data = await client
       .get(`get?what=wx&name=${callsign}&apikey=${config.aprs_token}&format=json`)
       .json();
 

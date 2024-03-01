@@ -1,5 +1,5 @@
 import got from 'got';
-import config from './loadConfig.js';
+import config from '../loadConfig.js';
 
 export default got.extend({
   prefixUrl: 'https://api.aprs.fi/api/',
