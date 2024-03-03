@@ -19,7 +19,7 @@ jobs:
         run: npm ci
 
       - name: Run linting
-        run: npm run lint
+        run: npm run lint:nofix
 
       # - name: Run tests
       #   run: npm run test
