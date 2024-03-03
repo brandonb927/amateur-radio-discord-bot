@@ -8,6 +8,7 @@ import config from '../utils/loadConfig.js';
 const getEmbed = (spot) =>
   new EmbedBuilder()
     .setColor(config.embed_color)
+    .setURL(`http://summits.sota.org.uk/summit/${spot.reference}`)
     .setTitle(`${spot.activatorCallsign} @ ${spot.summitCode}`)
     .addFields(
       {
@@ -78,8 +79,7 @@ export async function getSota(args, message) {
       }
       break;
     case 'spots':
-      //
-      break;
+      return message.reply('Not yet implemented!');
     default:
       return message.reply(`Unknown \`${config.prefix}sota\` command`);
   }

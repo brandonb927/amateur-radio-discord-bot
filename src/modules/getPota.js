@@ -140,8 +140,7 @@ export async function getPota(args, message) {
       }
       break;
     case 'activations':
-      //
-      break;
+      return message.reply('Not yet implemented!');
     default:
       return message.reply(`Unknown \`${config.prefix}pota\` command`);
   }
