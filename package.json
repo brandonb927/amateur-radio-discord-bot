@@ -1,10 +1,11 @@
 {
-  "name": "aprsbot",
-  "version": "1.0.0",
-  "description": "Bot for retrieving APRS station data",
+  "name": "amateur-radio-discord-bot",
+  "version": "2.0.0",
+  "description": "Discord.js bot for retrieving and displaying amateur radio data from a variety of sources",
   "main": "bot.js",
   "type": "module",
   "scripts": {
+    "preinstall": "cp example.env .env",
     "prettier:check": "prettier --cache .",
     "prettier:write": "prettier --cache --write .",
     "lint:nofix": "eslint . --cache && npm run prettier:check",
@@ -14,17 +15,18 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "pota",
+    "sota",
     "aprs.fi",
     "bots",
     "discord",
     "discord.js"
   ],
-  "author": "Blake Enloe",
+  "author": "Brandon Brown",
   "license": "ISC",
   "dependencies": {
-    "@electric-sql/pglite": "^0.0.1-alpha.2",
     "discord.js": "^14.14.1",
-    "fs-extra": "^11.2.0",
+    "dotenv": "^16.4.5",
     "got": "^14.2.0"
   },
   "devDependencies": {
