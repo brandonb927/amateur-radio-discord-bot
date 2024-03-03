@@ -23,9 +23,7 @@ docker pull ghcr.io/brandonb927/amateur-radio-discord-bot:latest
 1. Clone this repository locally
 1. Install [`asdf`](https://github.com/asdf-vm/asdf/) with the [`asdf-nodejs`](https://github.com/asdf-vm/asdf-nodejs) plugin (or run ensure the version of node in the `.tool-versions` is available to you)
 1. Install dependencies with `npm ci`
-1. Rename `config.example.json` to `config.json` and replace the tokens, timezone, and embed color with your own.
-   OR
-   Define the following environment variables when running the bot directly, or in a `.env` file for use with the Docker image:
+1. Define the following environment variables when running the bot directly, or in a `.env` file for use with the Docker image:
 
    ```txt
    # Fallbacks available in loadConfig.js
