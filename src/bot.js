@@ -68,17 +68,17 @@ client.on(Events.MessageCreate, async (message) => {
       break;
     case 'help':
       message.channel.send(
-        `**Currently available commands**:
-\`${config.prefix}loc callsign\` (alias for \`location\`)
-\`${config.prefix}location callsign\` to retrieve location information.
-\`${config.prefix}msg callsign\` (alias for \`messages\`).
-\`${config.prefix}messages callsign\` to retrieve ten latest messages for given recipient.
-\`${config.prefix}pota spots\` to retrieve recent Parks on the Air summit spots.
-[not yet implemented] \`${config.prefix}pota activations\` to retrieve Parks on the Air upcoming activations.
-\`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
-[not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.
-\`${config.prefix}wx callsign\` (alias for \`weather\`)
-\`${config.prefix}weather callsign\` to retrieve weather data.`
+        `**Available commands**:
+    - \`${config.prefix}loc callsign\` (alias for \`location\`)
+    - \`${config.prefix}location callsign\` to retrieve location information.
+    - \`${config.prefix}msg callsign\` (alias for \`messages\`).
+    - \`${config.prefix}messages callsign\` to retrieve ten latest APRS messages for given callsign.
+    - \`${config.prefix}pota spots\` to retrieve recent Parks on the Air summit spots.
+    - [not yet implemented] \`${config.prefix}pota activations\` to retrieve Parks on the Air upcoming activations.
+    - \`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
+    - [not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.
+    - \`${config.prefix}wx callsign\` (alias for \`weather\`)
+    - \`${config.prefix}weather callsign\` to retrieve weather data.`
       );
       break;
     default:

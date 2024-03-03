@@ -40,18 +40,9 @@ docker pull ghcr.io/brandonb927/amateur-radio-discord-bot:latest
 
 1. Run `npm run start`
 
-## Commands
+## Available commands
 
-- `?loc callsign` to retrieve location information.
-- `?msg callsign` (alias for `messages`)
-- `?messages callsign` to retrieve ten latest messages for given recipient.
-- `?pota spots` to retrieve recent Parks on the Air summit spots.
-- [not yet implemented] `?pota activations` to retrieve Parks on the Air upcoming activations.
-- `?sota spots` to retrieve recent Summits on the Air summit spots.
-- [not yet implemented] `?sota activations` to retrieve Summits on the Air upcoming activations.
-- `?wx callsign` to retrieve weather data.`
-
-Replace `callsign` with your device's callsign.
+Run `?help` to print out information on how to use the bot.
 
 ## Contributing
 
