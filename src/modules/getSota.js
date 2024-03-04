@@ -153,6 +153,17 @@ export async function getSota(args, message) {
   switch (method) {
     case 'spots':
       if (arg) {
+        if (arg === 'help') {
+          return message.reply(
+            `**Available commands**:
+- \`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
+- \`${config.prefix}sota spots [callsign]\` to retrieve Summits on the Air summit spots for a callsign.
+- \`${config.prefix}sota spots [band name]\` to retrieve Summits on the Air summit spots for a band name.
+  - Supported bands: ${bandNames.join(', ')}
+- [not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.`
+          );
+        }
+
         if (bandNames.includes(arg)) {
           return getRecentSpotsByBand(message, arg);
         }

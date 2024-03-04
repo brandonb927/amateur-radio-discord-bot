@@ -171,6 +171,17 @@ export async function getPota(args, message) {
   switch (method) {
     case 'spots':
       if (arg) {
+        if (arg === 'help') {
+          return message.reply(
+            `**Available commands**:
+- \`${config.prefix}pota spots\` to retrieve recent Parks on the Air summit spots.
+- \`${config.prefix}pota spots [callsign]\` to retrieve Parks on the Air summit spots for a callsign.
+- \`${config.prefix}pota spots [band name]\` to retrieve Parks on the Air summit spots for a band name.
+  - Supported bands: ${bandNames.join(', ')}
+- [not yet implemented] \`${config.prefix}pota activations\` to retrieve Parks on the Air upcoming activations.`
+          );
+        }
+
         if (bandNames.includes(arg)) {
           return getRecentSpotsByBand(message, arg);
         }
