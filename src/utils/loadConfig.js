@@ -1,5 +1,12 @@
 import 'dotenv/config';
 
+/**
+ * Utility function to retrieve a given environment variable by key and crash the process in the event it is missing.
+ *
+ * @param {string} name Environmant variable key name
+ * @param {string|null} fallback Fallback value to use if not found
+ * @returns {string}
+ */
 function getEnv(name, fallback = null) {
   let val = process.env[name];
   if (val === undefined || val === null) {

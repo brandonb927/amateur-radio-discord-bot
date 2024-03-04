@@ -2,8 +2,8 @@
  * Some of this code may or may not be borrowed from APRS.fi with good intentions...
  * Hessu if you read this, don't ban me please.
  * It is believed that in the nature of this service, according to https://aprs.fi/page/tos,
- * we are not contravening the ToS points 6 and 7 as they are written as we are
- * linking back to APRS.fi, and we are not recreating UI based on existing APRS.fi functionality.
+ * we are not contravening the ToS points 6 and 7 as they are written, as we are
+ * linking back to APRS.fi and we are not recreating UI based on existing APRS.fi functionality.
  * If the open source icons (https://github.com/hessu/aprs-symbols) were published
  * in a way where we could utilize them and serve them from our own web servers
  * to satisfy the http://www.aprs.org/symbols/symbols-new.txt new overlay table structure,
@@ -18,6 +18,12 @@ for (let i = 0; i < 256; i++) {
   decimalToHexStrings[i] = characterSet.substring(s1, s1 + 1) + characterSet.substring(s2, s2 + 1);
 }
 
+/**
+ * Returns the corresponding APRS.fi icon for a given symbol
+ *
+ * @param {string} symbol Symbol from APRS icon table
+ * @returns {string|undefined}
+ */
 export function getIconURLFromSymbol(symbol) {
   let code;
   const char1 = symbol.charCodeAt(0);

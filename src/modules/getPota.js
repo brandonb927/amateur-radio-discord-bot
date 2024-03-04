@@ -1,7 +1,9 @@
-import { EmbedBuilder } from 'discord.js';
-import client from '../utils/http/pota-app.js';
+import { EmbedBuilder, Message } from 'discord.js';
 import { bandNames, mapFrequencyToBandName } from '../utils/enums.js';
+import client from '../utils/http/pota-app.js';
 import config from '../utils/loadConfig.js';
+
+const NUM_SPOTS = 10;
 
 const getEmbed = (spot) =>
   new EmbedBuilder()
@@ -13,18 +15,22 @@ const getEmbed = (spot) =>
         {
           name: 'Park',
           value: `${spot.name} (${spot.reference})`,
+          inline: true,
         },
         {
           name: 'Frequency',
-          value: `${spot.frequency} MHz (${mapFrequencyToBandName(spot.frequency)}${spot.mode && `, ${spot.mode}`})`,
+          value: `${spot.frequency} MHz (${mapFrequencyToBandName(spot.frequency / 1000)}${spot.mode && `, ${spot.mode}`})`,
+          inline: true,
         },
         spot.grid6 && {
           name: 'Grid Square',
           value: spot.grid6,
+          inline: true,
         },
         spot.comments && {
           name: 'Comments',
           value: spot.comments,
+          inline: true,
         },
       ].filter(Boolean)
     )
@@ -32,6 +38,13 @@ const getEmbed = (spot) =>
       text: `Spotter: ${spot.spotter} | Last Heard: ${new Date(spot.spotTime).toUTCString()}`,
     });
 
+/**
+ * Get recent POTA spots by a given band
+ *
+ * @param {Message} message Discord message object
+ * @param {string} band Selected band to filter results by
+ * @returns {Message}
+ */
 async function getRecentSpotsByBand(message, band) {
   try {
     let data = await client.get(`spot/`).json();
@@ -44,7 +57,7 @@ async function getRecentSpotsByBand(message, band) {
 
     const filteredData = data
       .filter((spot) => mapFrequencyToBandName(spot.frequency) === band)
-      .slice(0, 10)
+      .slice(0, NUM_SPOTS)
       .sort((a, b) => new Date(a.spotTime).getTime() - new Date(b.spotTime).getTime());
 
     // If there are no spots after filtering by the band, send a message back
@@ -57,14 +70,22 @@ async function getRecentSpotsByBand(message, band) {
     }
 
     return message.reply({
+      content: `Here are the most recent POTA spots for the \`${band}\` band:`,
       embeds,
     });
   } catch (error) {
-    message.reply('There was an error retrieving POTA spots');
-    return console.error(error);
+    console.error(error);
+    return message.reply('There was an error retrieving POTA spots');
   }
 }
 
+/**
+ * Get recent POTA spots for a given callsign
+ *
+ * @param {Message} message Discord message object
+ * @param {string} callsign Selected callsign to filter results by
+ * @returns {Message}
+ */
 async function getRecentSpotsByCallsign(message, callsign) {
   try {
     let data = await client.get(`spot/`).json();
@@ -76,8 +97,8 @@ async function getRecentSpotsByCallsign(message, callsign) {
     }
 
     const filteredData = data
-      .filter((spot) => spot.spotter === callsign || spot.activator === callsign)
-      .slice(0, 10)
+      .filter((spot) => [spot.spotter, spot.activator].includes(callsign))
+      .slice(0, NUM_SPOTS)
       .sort((a, b) => new Date(a.spotTime).getTime() - new Date(b.spotTime).getTime());
 
     // If there are no spots after filtering by the callsign, send a message back
@@ -90,14 +111,21 @@ async function getRecentSpotsByCallsign(message, callsign) {
     }
 
     return message.reply({
+      content: `Here are the most recent POTA spots for \`${callsign}\`:`,
       embeds,
     });
   } catch (error) {
-    message.reply('There was an error retrieving POTA spots');
-    return console.error(error);
+    console.error(error);
+    return message.reply('There was an error retrieving POTA spots');
   }
 }
 
+/**
+ * Get `NUM_SPOTS` recent POTA Spots
+ *
+ * @param {Message} message Discord message object
+ * @returns {Message}}
+ */
 async function getRecentSpots(message) {
   try {
     let data = await client.get(`spot/`).json();
@@ -109,36 +137,46 @@ async function getRecentSpots(message) {
     }
 
     const filteredData = data
-      .slice(0, 10)
+      .slice(0, NUM_SPOTS)
       .sort((a, b) => new Date(a.spotTime).getTime() - new Date(b.spotTime).getTime());
+
+    // If for any reason the filtered data is empty, return _something_
+    if (!filteredData.length) {
+      return message.reply(`There was an error retrieving POTA spots`);
+    }
 
     for (const spot of filteredData) {
       embeds.push(getEmbed(spot));
     }
 
     return message.reply({
+      content: 'Here are the most recent POTA spots:',
       embeds,
     });
   } catch (error) {
-    message.reply('There was an error retrieving POTA spots');
-    return console.error(error);
+    console.error(error);
+    return message.reply('There was an error retrieving POTA spots');
   }
 }
 
+/**
+ * Process POTA command with args
+ *
+ * @param {string[]} args Arguments passed to the given command
+ * @param {Message} message Discord message object
+ * @returns {Message}
+ */
 export async function getPota(args, message) {
   const [method, arg] = args;
   switch (method) {
     case 'spots':
       if (arg) {
         if (bandNames.includes(arg)) {
-          getRecentSpotsByBand(message, arg);
-        } else {
-          getRecentSpotsByCallsign(message, arg);
+          return getRecentSpotsByBand(message, arg);
         }
-      } else {
-        getRecentSpots(message);
+        return getRecentSpotsByCallsign(message, arg);
       }
-      break;
+      return getRecentSpots(message);
     case 'activations':
       return message.reply('Not yet implemented!');
     default:

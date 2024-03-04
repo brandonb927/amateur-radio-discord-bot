@@ -91,9 +91,6 @@ export const bands = [
 export const bandNames = bands.map((i) => i.band);
 
 export const mapFrequencyToBandName = (frequency) => {
-  const freqMhz = frequency / 1000;
-  const bandObj = bands.find((item) => {
-    return freqMhz >= item.lower && freqMhz <= item.upper;
-  });
+  const bandObj = bands.find((item) => frequency >= item.lower && frequency <= item.upper);
   return (bandObj && bandObj.band) || false;
 };

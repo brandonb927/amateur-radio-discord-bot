@@ -37,7 +37,7 @@ client.on(Events.ClientReady, async () => {
   //     scopes: [OAuth2Scopes.Bot],
   //   });
   // console.log(`Invite link: ${inviteLink}`);
-  console.log(`APRS Bot ready!`);
+  console.log(`Bot ready!`);
   client.user.setActivity('Stations', { type: ActivityType.Watching });
 });
 
