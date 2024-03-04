@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "preinstall": "cp example.env .env",
-    "prettier:check": "prettier --cache .",
-    "prettier:write": "prettier --cache --write .",
+    "prettier:check": "prettier src --cache --list-different",
+    "prettier:write": "prettier src --cache --write",
     "lint:nofix": "eslint . --cache && npm run prettier:check",
     "lint": "eslint . --fix --cache && npm run prettier:write",
     "start:dev": "nodemon ./src/bot.js",
