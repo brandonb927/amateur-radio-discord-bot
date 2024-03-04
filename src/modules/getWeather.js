@@ -1,8 +1,15 @@
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, Message } from 'discord.js';
 import { DATE_OPTIONS } from '../utils/enums.js';
 import client from '../utils/http/aprs-fi.js';
 import config from '../utils/loadConfig.js';
 
+/**
+ * Retrieves weather information for a given callsign
+ *
+ * @param {string[]} args Arguments passed to the given command
+ * @param {Message} message Discord message object
+ * @returns {Message}
+ */
 export async function getWeather(args, message) {
   const [callsign] = args;
 
@@ -47,7 +54,7 @@ export async function getWeather(args, message) {
         },
       ].filter(Boolean);
 
-      message.reply({
+      return message.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(config.embed_color)
@@ -60,6 +67,7 @@ export async function getWeather(args, message) {
       });
     }
   } catch (error) {
-    return console.error(error);
+    console.error(error);
+    return message.reply(`There was an error retrieving APRS weather information for ${callsign}`);
   }
 }
