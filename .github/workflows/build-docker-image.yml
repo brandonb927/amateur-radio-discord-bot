@@ -3,7 +3,7 @@ name: Build and push Docker image to GHCR
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
 
 jobs:
   build_and_push:
