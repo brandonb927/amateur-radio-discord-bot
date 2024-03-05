@@ -1,16 +1,6 @@
 import config from './loadConfig.js';
 
-export const DATE_OPTIONS = {
-  weekday: 'short',
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  timeZone: config.timezone,
-};
-
-export const bands = [
+export const BANDS = [
   {
     band: '160m',
     lower: 1.8,
@@ -88,9 +78,23 @@ export const bands = [
   },
 ];
 
-export const bandNames = bands.map((i) => i.band);
+export const BAND_NAMES = BANDS.map((i) => i.band);
 
 export const mapFrequencyToBandName = (frequency) => {
-  const bandObj = bands.find((item) => frequency >= item.lower && frequency <= item.upper);
+  const bandObj = BANDS.find((item) => frequency >= item.lower && frequency <= item.upper);
   return (bandObj && bandObj.band) || false;
+};
+
+export const DATE_OPTIONS = {
+  weekday: 'short',
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  timeZone: config.timezone,
+};
+
+export const ERROR = {
+  NOT_YET_IMPLEMENTED: '⚠️ Not yet implemented!',
 };

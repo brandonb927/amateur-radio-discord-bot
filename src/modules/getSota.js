@@ -1,5 +1,5 @@
 import { EmbedBuilder, Message } from 'discord.js';
-import { bandNames, mapFrequencyToBandName } from '../utils/enums.js';
+import { BAND_NAMES, ERROR, mapFrequencyToBandName } from '../utils/enums.js';
 import client from '../utils/http/sota-org.js';
 import config from '../utils/loadConfig.js';
 
@@ -115,9 +115,30 @@ async function getRecentSpotsByCallsign(message, callsign) {
  * Get `NUM_SPOTS` recent SOTA Spots
  *
  * @param {Message} message Discord message object
+ * @param {string} arg Argument passed to the given command
  * @returns {Message}
  */
-async function getRecentSpots(message) {
+async function getRecentSpots(message, arg) {
+  if (arg) {
+    if (arg === 'help') {
+      return message.reply(
+        `**Available commands**:
+- \`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
+- \`${config.prefix}sota spots [callsign]\` to retrieve Summits on the Air summit spots for a callsign.
+- \`${config.prefix}sota spots [band name]\` to retrieve Summits on the Air summit spots for a band name.
+- Supported bands: ${BAND_NAMES.join(', ')}
+- [not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.`
+      );
+    }
+
+    if (BAND_NAMES.includes(arg)) {
+      return getRecentSpotsByBand(message, arg);
+    }
+
+    return getRecentSpotsByCallsign(message, arg);
+  }
+
+  // Default no-arg is return recent Spots
   try {
     let data = await client.get(`spots/${NUM_SPOTS}/`).json();
     let embeds = [];
@@ -152,26 +173,20 @@ export async function getSota(args, message) {
   const [method, arg] = args;
   switch (method) {
     case 'spots':
-      if (arg) {
-        if (arg === 'help') {
-          return message.reply(
-            `**Available commands**:
+      if (arg && arg === 'help') {
+        return message.reply(
+          `**Available commands**:
 - \`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
 - \`${config.prefix}sota spots [callsign]\` to retrieve Summits on the Air summit spots for a callsign.
 - \`${config.prefix}sota spots [band name]\` to retrieve Summits on the Air summit spots for a band name.
-  - Supported bands: ${bandNames.join(', ')}
+  - **Supported bands**: ${BAND_NAMES.join(', ')}
 - [not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.`
-          );
-        }
-
-        if (bandNames.includes(arg)) {
-          return getRecentSpotsByBand(message, arg);
-        }
-        return getRecentSpotsByCallsign(message, arg);
+        );
       }
-      return getRecentSpots(message);
+
+      return getRecentSpots(message, arg);
     case 'activations':
-      return message.reply('Not yet implemented!');
+      return message.reply(ERROR.ERROR_NOT_YET_IMPLEMENTED);
     default:
       return message.reply(`Unknown \`${config.prefix}sota\` command`);
   }
