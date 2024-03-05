@@ -5,7 +5,6 @@
   "main": "bot.js",
   "type": "module",
   "scripts": {
-    "preinstall": "cp example.env .env",
     "prettier:check": "prettier src --cache --list-different",
     "prettier:write": "prettier src --cache --write",
     "lint:nofix": "eslint . --cache && npm run prettier:check",
