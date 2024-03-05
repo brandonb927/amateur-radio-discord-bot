@@ -50,11 +50,11 @@ client.on(Events.MessageCreate, async (message) => {
   switch (command) {
     case 'location':
     case 'loc':
-      getLocationInfo(args, message);
+      await getLocationInfo(args, message);
       break;
     case 'messages':
     case 'msg':
-      getMessages(args, message);
+      await getMessages(args, message);
       break;
     case 'sota':
       await getSota(args, message);
@@ -64,23 +64,22 @@ client.on(Events.MessageCreate, async (message) => {
       break;
     case 'weather':
     case 'wx':
-      getWeather(args, message);
+      await getWeather(args, message);
       break;
     case 'help':
-      message.channel.send(
+      return message.channel.send(
         `**Available commands**:
-    - \`${config.prefix}loc callsign\` (alias for \`location\`)
-    - \`${config.prefix}location callsign\` to retrieve location information.
-    - \`${config.prefix}msg callsign\` (alias for \`messages\`).
-    - \`${config.prefix}messages callsign\` to retrieve ten latest APRS messages for given callsign.
-    - \`${config.prefix}pota spots\` to retrieve recent Parks on the Air summit spots.
-    - [not yet implemented] \`${config.prefix}pota activations\` to retrieve Parks on the Air upcoming activations.
-    - \`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
-    - [not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.
-    - \`${config.prefix}wx callsign\` (alias for \`weather\`)
-    - \`${config.prefix}weather callsign\` to retrieve weather data.`
+- \`${config.prefix}loc callsign\` (alias for \`location\`)
+- \`${config.prefix}location callsign\` to retrieve location information.
+- \`${config.prefix}msg callsign\` (alias for \`messages\`).
+- \`${config.prefix}messages callsign\` to retrieve ten latest APRS messages for given callsign.
+- \`${config.prefix}pota spots\` to retrieve recent Parks on the Air summit spots.
+- [not yet implemented] \`${config.prefix}pota activations\` to retrieve Parks on the Air upcoming activations.
+- \`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
+- [not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.
+- \`${config.prefix}wx callsign\` (alias for \`weather\`)
+- \`${config.prefix}weather callsign\` to retrieve weather data.`
       );
-      break;
     default:
       break;
   }

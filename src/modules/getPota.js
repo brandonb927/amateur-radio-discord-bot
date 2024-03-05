@@ -1,5 +1,5 @@
 import { EmbedBuilder, Message } from 'discord.js';
-import { bandNames, mapFrequencyToBandName } from '../utils/enums.js';
+import { BAND_NAMES, ERROR, mapFrequencyToBandName } from '../utils/enums.js';
 import client from '../utils/http/pota-app.js';
 import config from '../utils/loadConfig.js';
 
@@ -124,9 +124,19 @@ async function getRecentSpotsByCallsign(message, callsign) {
  * Get `NUM_SPOTS` recent POTA Spots
  *
  * @param {Message} message Discord message object
- * @returns {Message}}
+ * @param {string} arg Argument passed to the given command
+ * @returns {Message}
  */
-async function getRecentSpots(message) {
+async function getRecentSpots(message, arg) {
+  if (arg) {
+    if (BAND_NAMES.includes(arg)) {
+      return getRecentSpotsByBand(message, arg);
+    }
+
+    return getRecentSpotsByCallsign(message, arg);
+  }
+
+  // Default no-arg is return recent Spots
   try {
     let data = await client.get(`spot/`).json();
     let embeds = [];
@@ -170,26 +180,20 @@ export async function getPota(args, message) {
   const [method, arg] = args;
   switch (method) {
     case 'spots':
-      if (arg) {
-        if (arg === 'help') {
-          return message.reply(
-            `**Available commands**:
+      if (arg && arg === 'help') {
+        return message.reply(
+          `**Available commands**:
 - \`${config.prefix}pota spots\` to retrieve recent Parks on the Air summit spots.
 - \`${config.prefix}pota spots [callsign]\` to retrieve Parks on the Air summit spots for a callsign.
 - \`${config.prefix}pota spots [band name]\` to retrieve Parks on the Air summit spots for a band name.
-  - Supported bands: ${bandNames.join(', ')}
+  - **Supported bands**: ${BAND_NAMES.join(', ')}
 - [not yet implemented] \`${config.prefix}pota activations\` to retrieve Parks on the Air upcoming activations.`
-          );
-        }
-
-        if (bandNames.includes(arg)) {
-          return getRecentSpotsByBand(message, arg);
-        }
-        return getRecentSpotsByCallsign(message, arg);
+        );
       }
-      return getRecentSpots(message);
+
+      return getRecentSpots(message, arg);
     case 'activations':
-      return message.reply('Not yet implemented!');
+      return message.reply(ERROR.ERROR_NOT_YET_IMPLEMENTED);
     default:
       return message.reply(`Unknown \`${config.prefix}pota\` command`);
   }
