@@ -9,7 +9,7 @@
     "prettier:write": "prettier src --cache --write",
     "lint:nofix": "eslint . --cache && npm run prettier:check",
     "lint": "eslint . --fix --cache && npm run prettier:write",
-    "start:dev": "BOT_MSG_PREFIX='?dev:' nodemon ./src/bot.js",
+    "start:dev": "BOT_MSG_PREFIX='?dev:' nodemon --delay 2.5 --watch src ./src/bot.js",
     "start": "node ./src/bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,14 +24,18 @@
   "author": "Brandon Brown",
   "license": "ISC",
   "dependencies": {
+    "cron-parser": "^4.9.0",
+    "cronstrue": "^2.48.0",
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
-    "got": "^14.2.0"
+    "got": "^14.2.1",
+    "lowdb": "^7.0.1",
+    "markdown-table": "^3.0.3"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-jsdoc": "^48.2.0",
+    "eslint-plugin-jsdoc": "^48.2.1",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5"
   }

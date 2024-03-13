@@ -21,6 +21,8 @@ function getEnv(name, fallback = null) {
 // Allow environment variables to be defined as well for config values
 export default {
   token: getEnv('BOT_DISCORD_TOKEN'),
+  app_id: getEnv('BOT_DISCORD_APP_ID'),
+  guild_id: getEnv('BOT_DISCORD_GUILD_ID'),
   prefix: getEnv('BOT_MSG_PREFIX', '?'),
   aprs_token: getEnv('BOT_APRSFI_TOKEN'),
   gmaps_token: getEnv('BOT_GMAPS_TOKEN'),

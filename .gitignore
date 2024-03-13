@@ -86,3 +86,5 @@ typings/
 
 # vscode
 .vscode
+
+db.json
