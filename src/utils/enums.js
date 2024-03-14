@@ -1,4 +1,4 @@
-import config from './loadConfig.js';
+import config from './config.js';
 
 export const BANDS = [
   {

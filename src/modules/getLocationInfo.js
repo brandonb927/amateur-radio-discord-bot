@@ -3,7 +3,7 @@ import { DATE_OPTIONS } from '../utils/enums.js';
 import { getAprsFiCallsignTrackingUrl } from '../utils/getAprsFiCallsignTrackingUrl.js';
 import { getIconURLFromSymbol } from '../utils/getIconFromsymbol.js';
 import client from '../utils/http/aprs-fi.js';
-import config from '../utils/loadConfig.js';
+import config from '../utils/config.js';
 
 /**
  * Retrieves location information for a given callsign
