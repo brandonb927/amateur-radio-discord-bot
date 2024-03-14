@@ -24,13 +24,13 @@
   "author": "Brandon Brown",
   "license": "ISC",
   "dependencies": {
-    "cron-parser": "^4.9.0",
     "cronstrue": "^2.48.0",
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
     "got": "^14.2.1",
     "lowdb": "^7.0.1",
-    "markdown-table": "^3.0.3"
+    "markdown-table": "^3.0.3",
+    "node-cron": "^3.0.3"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

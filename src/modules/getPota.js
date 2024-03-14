@@ -1,7 +1,7 @@
 import { EmbedBuilder, Message } from 'discord.js';
 import { BAND_NAMES, ERROR, mapFrequencyToBandName } from '../utils/enums.js';
 import client from '../utils/http/pota-app.js';
-import config from '../utils/loadConfig.js';
+import config from '../utils/config.js';
 
 const NUM_SPOTS = 10;
 

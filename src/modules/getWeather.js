@@ -1,7 +1,7 @@
 import { EmbedBuilder, Message } from 'discord.js';
 import { DATE_OPTIONS } from '../utils/enums.js';
 import client from '../utils/http/aprs-fi.js';
-import config from '../utils/loadConfig.js';
+import config from '../utils/config.js';
 
 /**
  * Retrieves weather information for a given callsign

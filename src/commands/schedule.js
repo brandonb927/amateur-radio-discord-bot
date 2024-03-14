@@ -1,5 +1,5 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import cronParser from 'cron-parser';
+import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import cron from 'node-cron';
 import cronstrue from 'cronstrue';
 import { markdownTable } from 'markdown-table';
 import { db, getNextTableId } from '../utils/db.js';
@@ -20,6 +20,13 @@ export default {
       subcommand
         .setName('new')
         .setDescription('Creates a new scheduled message')
+        .addChannelOption((option) =>
+          option
+            .setName('channel')
+            .setDescription('Channel to send message to')
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(true)
+        )
         .addStringOption((option) =>
           option.setName('cron').setDescription(descriptionCronSyntax).setRequired(true)
         )
@@ -36,6 +43,13 @@ export default {
         .setDescription('Updates an existing scheduled message by its id')
         .addStringOption((option) =>
           option.setName('id').setDescription('Scheduled message id').setRequired(true)
+        )
+        .addChannelOption((option) =>
+          option
+            .setName('channel')
+            .setDescription('Channel to send message to')
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(true)
         )
         .addStringOption((option) =>
           option.setName('cron').setDescription(descriptionCronSyntax).setRequired(true)
@@ -54,8 +68,7 @@ export default {
         .addStringOption((option) =>
           option.setName('id').setDescription('Scheduled message id').setRequired(true)
         )
-    )
-    .setDefaultMemberPermissions(0),
+    ),
   /**
    * Execution of `schedule` slash-command
    *
@@ -97,10 +110,10 @@ function formatCron(string) {
  * @returns {ChatInputCommandInteraction}
  */
 async function handleScheduleList(interaction) {
-  let table = [['Id', 'Schedule', 'Notification content']];
+  let table = [['Id', 'Channel', 'Schedule', 'Notification content']];
 
-  db.data.scheduledMessages.map(({ id, schedule, message }) => {
-    table.push([id, schedule, JSON.parse(message)]);
+  db.data.scheduledMessages.map(({ id, channel, schedule, message }) => {
+    table.push([id, channel, schedule, JSON.parse(message)]);
   });
 
   return await interaction.reply({
@@ -115,11 +128,12 @@ async function handleScheduleList(interaction) {
  * @returns {ChatInputCommandInteraction}
  */
 async function handleScheduleNew(interaction) {
+  const channel = interaction.options.getChannel('channel');
   const cronSchedule = interaction.options.getString('cron');
   const message = interaction.options.getString('message');
 
   try {
-    cronParser.parseExpression(cronSchedule);
+    cron.validate(cronSchedule);
   } catch (error) {
     console.error(error);
     return await interaction.reply({
@@ -131,6 +145,7 @@ async function handleScheduleNew(interaction) {
   await db.update(({ scheduledMessages }) => {
     scheduledMessages.push({
       id,
+      channel: channel.id,
       schedule: cronSchedule,
       message: JSON.stringify(message),
     });
@@ -139,7 +154,8 @@ async function handleScheduleNew(interaction) {
   return await interaction.reply({
     content: `Your scheduled message
 \`\`\`
-ID: ${id}
+Id: ${id}
+Channel Id: ${channel.id}
 Schedule: [${cronSchedule}] ${formatCron(cronSchedule)}
 Message: ${message}
 \`\`\``,
@@ -154,11 +170,12 @@ Message: ${message}
  */
 async function handleScheduleUpdate(interaction) {
   const id = interaction.options.getString('id');
+  const channel = interaction.options.getChannel('channel');
   const cronSchedule = interaction.options.getString('cron');
   const message = interaction.options.getString('message');
 
   try {
-    cronParser.parseExpression(cronSchedule);
+    cron.validate(cronSchedule);
   } catch (error) {
     console.error(error);
     return await interaction.reply({
@@ -168,6 +185,7 @@ async function handleScheduleUpdate(interaction) {
 
   await db.update(({ scheduledMessages }) => {
     const notification = scheduledMessages.find((notification) => notification.id === parseInt(id));
+    notification.channel = channel;
     notification.schedule = cronSchedule;
     notification.message = JSON.stringify(message);
   });
@@ -175,7 +193,8 @@ async function handleScheduleUpdate(interaction) {
   return await interaction.reply({
     content: `Your scheduled message
 \`\`\`
-ID: ${id}
+Id: ${id}
+Channel Id: ${channel.id}
 Schedule: [${cronSchedule}] ${formatCron(cronSchedule)}
 Message: ${message}
 \`\`\``,
