@@ -1,8 +1,10 @@
 import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import cron from 'node-cron';
+import { CronTime } from 'cron';
 import cronstrue from 'cronstrue';
 import { markdownTable } from 'markdown-table';
 import { db, getNextTableId } from '../utils/db.js';
+import { hasRole } from '../utils/hasRole.js';
+import { loadScheduledMessages } from '../utils/scheduledMessages.js';
 
 const descriptionCronSyntax =
   'Cron syntax schedule, consult https://crontab.guru for assistance here';
@@ -39,31 +41,7 @@ export default {
     )
     .addSubcommand((subcommand) =>
       subcommand
-        .setName('update')
-        .setDescription('Updates an existing scheduled message by its id')
-        .addStringOption((option) =>
-          option.setName('id').setDescription('Scheduled message id').setRequired(true)
-        )
-        .addChannelOption((option) =>
-          option
-            .setName('channel')
-            .setDescription('Channel to send message to')
-            .addChannelTypes(ChannelType.GuildText)
-            .setRequired(true)
-        )
-        .addStringOption((option) =>
-          option.setName('cron').setDescription(descriptionCronSyntax).setRequired(true)
-        )
-        .addStringOption((option) =>
-          option
-            .setName('message')
-            .setDescription('Message to be posted on schedule')
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName('delete')
+        .setName('remove')
         .setDescription('Deletes an existing scheduled message by its id')
         .addStringOption((option) =>
           option.setName('id').setDescription('Scheduled message id').setRequired(true)
@@ -78,11 +56,14 @@ export default {
   async execute(interaction) {
     switch (interaction.options.getSubcommand()) {
       case 'list':
+        if (!hasRole(interaction.member, 'Bot Admin')) break;
         return await handleScheduleList(interaction);
       case 'new':
+        if (!hasRole(interaction.member, 'Bot Admin')) break;
         return await handleScheduleNew(interaction);
-      case 'update':
-        return await handleScheduleUpdate(interaction);
+      case 'remove':
+        if (!hasRole(interaction.member, 'Bot Admin')) break;
+        return await handleScheduleRemove(interaction);
       default:
         break;
     }
@@ -94,7 +75,7 @@ export default {
 };
 
 /**
- * Foramts a given cron syntax string to a human readable string.
+ * Formats a given cron syntax string to a human readable string.
  *
  * @param {string} string Cron syntax schedule
  * @returns {string}
@@ -104,20 +85,31 @@ function formatCron(string) {
 }
 
 /**
+ * Returns a markdown-formatted list of the scheduled messages from the db
+ *
+ * @param {Client} client The active Discord server client instance
+ * @returns {string}
+ */
+function listScheduledMessages(client) {
+  let table = [['Id', 'Channel', 'Schedule', 'Notification content']];
+
+  db.data.scheduledMessages.map(({ id, channel, schedule, message }) => {
+    const discordChannel = client.channels.cache.get(channel);
+    table.push([id, `#${discordChannel.name}`, `[${schedule}] ${formatCron(schedule)}`, message]);
+  });
+
+  return `\`\`\`${markdownTable(table)}\`\`\``;
+}
+
+/**
  * Handle the `/schedule list` subcommand
  *
  * @param {ChatInputCommandInteraction} interaction Chat interaction object
  * @returns {ChatInputCommandInteraction}
  */
 async function handleScheduleList(interaction) {
-  let table = [['Id', 'Channel', 'Schedule', 'Notification content']];
-
-  db.data.scheduledMessages.map(({ id, channel, schedule, message }) => {
-    table.push([id, channel, schedule, JSON.parse(message)]);
-  });
-
   return await interaction.reply({
-    content: `\`\`\`${markdownTable(table)}\`\`\``,
+    content: listScheduledMessages(interaction.client),
   });
 }
 
@@ -129,11 +121,11 @@ async function handleScheduleList(interaction) {
  */
 async function handleScheduleNew(interaction) {
   const channel = interaction.options.getChannel('channel');
-  const cronSchedule = interaction.options.getString('cron');
+  const schedule = interaction.options.getString('cron');
   const message = interaction.options.getString('message');
 
   try {
-    cron.validate(cronSchedule);
+    new CronTime(schedule);
   } catch (error) {
     console.error(error);
     return await interaction.reply({
@@ -143,60 +135,40 @@ async function handleScheduleNew(interaction) {
 
   const id = getNextTableId(db.data.scheduledMessages);
   await db.update(({ scheduledMessages }) => {
-    scheduledMessages.push({
+    const scheduled = {
       id,
       channel: channel.id,
-      schedule: cronSchedule,
-      message: JSON.stringify(message),
-    });
+      schedule,
+      message,
+    };
+    scheduledMessages.push(scheduled);
   });
 
+  loadScheduledMessages(interaction.client);
+
   return await interaction.reply({
-    content: `Your scheduled message
-\`\`\`
-Id: ${id}
-Channel Id: ${channel.id}
-Schedule: [${cronSchedule}] ${formatCron(cronSchedule)}
-Message: ${message}
-\`\`\``,
+    content: `Your message has been scheduled with id ${id}\n${listScheduledMessages(interaction.client)}`,
   });
 }
 
 /**
- * Handle the `/schedule update` subcommand
+ * Handle the `/schedule remove` subcommand
  *
  * @param {ChatInputCommandInteraction} interaction Chat interaction object
  * @returns {ChatInputCommandInteraction}
  */
-async function handleScheduleUpdate(interaction) {
+async function handleScheduleRemove(interaction) {
   const id = interaction.options.getString('id');
-  const channel = interaction.options.getChannel('channel');
-  const cronSchedule = interaction.options.getString('cron');
-  const message = interaction.options.getString('message');
 
-  try {
-    cron.validate(cronSchedule);
-  } catch (error) {
-    console.error(error);
-    return await interaction.reply({
-      content: cronScheduleInvalid,
-    });
-  }
-
-  await db.update(({ scheduledMessages }) => {
-    const notification = scheduledMessages.find((notification) => notification.id === parseInt(id));
-    notification.channel = channel;
-    notification.schedule = cronSchedule;
-    notification.message = JSON.stringify(message);
+  db.update(({ scheduledMessages }) => {
+    db.data.scheduledMessages = scheduledMessages.filter(
+      (notification) => notification.id !== parseInt(id)
+    );
   });
 
+  loadScheduledMessages(interaction.client);
+
   return await interaction.reply({
-    content: `Your scheduled message
-\`\`\`
-Id: ${id}
-Channel Id: ${channel.id}
-Schedule: [${cronSchedule}] ${formatCron(cronSchedule)}
-Message: ${message}
-\`\`\``,
+    content: `Your message has been deleted with id ${id}\n${listScheduledMessages(interaction.client)}`,
   });
 }
