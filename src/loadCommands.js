@@ -58,7 +58,6 @@ export async function loadCommands(client) {
 
     console.log(`Successfully reloaded ${data.length} application slash-commands.`);
   } catch (error) {
-    // And of course, make sure you catch and log any errors!
     console.error(error);
   }
 

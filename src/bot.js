@@ -13,7 +13,7 @@ import { getLocationInfo } from './modules/getLocationInfo.js';
 import { getWeather } from './modules/getWeather.js';
 import { getSota } from './modules/getSota.js';
 import { getPota } from './modules/getPota.js';
-import { loadScheduledMessages } from './loadScheduledMessages.js';
+import { loadScheduledMessages } from './utils/scheduledMessages.js';
 
 let client = new Client({
   intents: [
@@ -25,22 +25,6 @@ let client = new Client({
 
 client.on(Events.Error, (e) => {
   console.error(e);
-});
-
-client.on(Events.ClientReady, async () => {
-  // const inviteLink = await client
-  //   .generateInvite({
-  //     permissions: [
-  //       PermissionFlagsBits.AttachFiles,
-  //       PermissionFlagsBits.EmbedLinks,
-  //       PermissionFlagsBits.ReadMessageHistory,
-  //       PermissionFlagsBits.SendMessages,
-  //     ],
-  //     scopes: [OAuth2Scopes.Bot],
-  //   });
-  // console.log(`Invite link: ${inviteLink}`);
-  console.log(`Bot ready!`);
-  client.user.setActivity('Stations', { type: ActivityType.Watching });
 });
 
 client.on(Events.MessageCreate, async (message) => {
@@ -87,10 +71,25 @@ client.on(Events.MessageCreate, async (message) => {
   }
 });
 
+client.on(Events.ClientReady, async () => {
+  // const inviteLink = await client
+  //   .generateInvite({
+  //     permissions: [
+  //       PermissionFlagsBits.AttachFiles,
+  //       PermissionFlagsBits.EmbedLinks,
+  //       PermissionFlagsBits.ReadMessageHistory,
+  //       PermissionFlagsBits.SendMessages,
+  //     ],
+  //     scopes: [OAuth2Scopes.Bot],
+  //   });
+  // console.log(`Invite link: ${inviteLink}`);
+
+  client.cronJobs = await loadScheduledMessages(client);
+
+  console.log(`Bot ready!`);
+  client.user.setActivity('Stations', { type: ActivityType.Watching });
+});
+
 client = await loadCommands(client);
 
 client.login(config.token);
-
-client.on('ready', async () => {
-  await loadScheduledMessages(client);
-});
