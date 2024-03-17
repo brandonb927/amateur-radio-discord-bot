@@ -1,19 +1,7 @@
-import {
-  ActivityType,
-  Client,
-  Events,
-  GatewayIntentBits,
-  // OAuth2Scopes,
-  // PermissionFlagsBits,
-} from 'discord.js';
-import { loadCommands } from './loadCommands.js';
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { Client, Collection, GatewayIntentBits, REST, Routes } from 'discord.js';
 import config from './utils/config.js';
-import { getMessages } from './modules/getMessages.js';
-import { getLocationInfo } from './modules/getLocationInfo.js';
-import { getWeather } from './modules/getWeather.js';
-import { getSota } from './modules/getSota.js';
-import { getPota } from './modules/getPota.js';
-import { loadScheduledMessages } from './utils/scheduledMessages.js';
 
 let client = new Client({
   intents: [
@@ -23,73 +11,53 @@ let client = new Client({
   ],
 });
 
-client.on(Events.Error, (e) => {
-  console.error(e);
-});
+const commands = [];
 
-client.on(Events.MessageCreate, async (message) => {
-  // Prevent botception!
-  if (!message.content.startsWith(config.prefix) || message.author.bot) return;
+client.commands = new Collection();
 
-  const args = message.content.slice(config.prefix.length).trim().split(/\s+/g);
-  const command = args.shift().toLowerCase();
-  switch (command) {
-    case 'location':
-    case 'loc':
-      await getLocationInfo(args, message);
-      break;
-    case 'messages':
-    case 'msg':
-      await getMessages(args, message);
-      break;
-    case 'sota':
-      await getSota(args, message);
-      break;
-    case 'pota':
-      await getPota(args, message);
-      break;
-    case 'weather':
-    case 'wx':
-      await getWeather(args, message);
-      break;
-    case 'help':
-      return message.channel.send(
-        `**Available commands**:
-- \`${config.prefix}loc callsign\` (alias for \`location\`)
-- \`${config.prefix}location callsign\` to retrieve location information.
-- \`${config.prefix}msg callsign\` (alias for \`messages\`).
-- \`${config.prefix}messages callsign\` to retrieve ten latest APRS messages for given callsign.
-- \`${config.prefix}pota spots\` to retrieve recent Parks on the Air summit spots.
-- [not yet implemented] \`${config.prefix}pota activations\` to retrieve Parks on the Air upcoming activations.
-- \`${config.prefix}sota spots\` to retrieve recent Summits on the Air summit spots.
-- [not yet implemented] \`${config.prefix}sota activations\` to retrieve Summits on the Air upcoming activations.
-- \`${config.prefix}wx callsign\` (alias for \`weather\`)
-- \`${config.prefix}weather callsign\` to retrieve weather data.`
-      );
-    default:
-      break;
+const commandsFolderPath = join(__dirname, 'commands');
+const commandFiles = readdirSync(commandsFolderPath).filter((file) => file.endsWith('.js'));
+for (const file of commandFiles) {
+  const filePath = join(commandsFolderPath, file);
+  const commandModule = await import(filePath);
+  const command = commandModule.default;
+  if ('data' in command && 'execute' in command) {
+    client.commands.set(command.data.name, command);
+    commands.push(command.data.toJSON());
+  } else {
+    console.warn(
+      `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+    );
   }
-});
+}
 
-client.on(Events.ClientReady, async () => {
-  // const inviteLink = await client
-  //   .generateInvite({
-  //     permissions: [
-  //       PermissionFlagsBits.AttachFiles,
-  //       PermissionFlagsBits.EmbedLinks,
-  //       PermissionFlagsBits.ReadMessageHistory,
-  //       PermissionFlagsBits.SendMessages,
-  //     ],
-  //     scopes: [OAuth2Scopes.Bot],
-  //   });
-  // console.log(`Invite link: ${inviteLink}`);
+const eventsPath = join(__dirname, 'events');
+const eventFiles = readdirSync(eventsPath).filter((file) => file.endsWith('.js'));
 
-  client.cronJobs = await loadScheduledMessages(client);
+for (const file of eventFiles) {
+  const filePath = join(eventsPath, file);
+  const eventModule = await import(filePath);
+  const event = eventModule.default;
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args));
+  }
+}
 
-  console.log(`Bot ready!`);
-  client.user.setActivity('Stations', { type: ActivityType.Watching });
-});
+try {
+  console.log(`Started refreshing ${commands.length} application slash-commands.`);
 
-client = await loadCommands(client);
+  const discordApi = new REST().setToken(config.token);
+
+  const data = await discordApi.put(
+    Routes.applicationGuildCommands(config.app_id, config.guild_id),
+    { body: commands }
+  );
+
+  console.log(`Successfully reloaded ${data.length} application slash-commands.`);
+} catch (error) {
+  console.error(error);
+}
 
 client.login(config.token);
