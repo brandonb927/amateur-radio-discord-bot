@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { Client, ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { CronTime } from 'cron';
 import cronstrue from 'cronstrue';
 import { markdownTable } from 'markdown-table';
