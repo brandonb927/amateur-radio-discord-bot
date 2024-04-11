@@ -45,7 +45,8 @@ export function scheduleMessage(channel, scheduled) {
   const cronjob = new CronJob(
     schedule,
     function () {
-      console.log(`Sending message to channel #${channel.name}`);
+      console.log(`\nSending message to channel #${channel.name}`);
+      console.log(`  ${message}`);
       channel.send(message);
     },
     false,

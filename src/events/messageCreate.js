@@ -1,10 +1,10 @@
 import { Events } from 'discord.js';
-import config from '../utils/config';
-import { getLocationInfo } from '../modules/getLocationInfo';
-import { getMessages } from '../modules/getMessages';
-import { getSota } from '../modules/getSota';
-import { getPota } from '../modules/getPota';
-import { getWeather } from '../modules/getWeather';
+import config from '../utils/config.js';
+import { getLocationInfo } from '../modules/getLocationInfo.js';
+import { getMessages } from '../modules/getMessages.js';
+import { getSota } from '../modules/getSota.js';
+import { getPota } from '../modules/getPota.js';
+import { getWeather } from '../modules/getWeather.js';
 
 export default {
   name: Events.MessageCreate,
