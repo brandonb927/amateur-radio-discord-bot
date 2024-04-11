@@ -3,6 +3,8 @@ import { join } from 'node:path';
 import { Client, Collection, GatewayIntentBits, REST, Routes } from 'discord.js';
 import config from './utils/config.js';
 
+const __dirname = import.meta.dirname;
+
 let client = new Client({
   intents: [
     GatewayIntentBits.Guilds,

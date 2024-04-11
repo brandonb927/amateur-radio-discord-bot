@@ -4,7 +4,7 @@ import {
   // OAuth2Scopes,
   // PermissionFlagsBits,
 } from 'discord.js';
-import { loadScheduledMessages } from '../utils/scheduledMessages';
+import { loadScheduledMessages } from '../utils/scheduledMessages.js';
 
 export default {
   name: Events.ClientReady,
