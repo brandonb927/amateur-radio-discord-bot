@@ -20,6 +20,7 @@ function getEnv(name, fallback = null) {
 
 // Allow environment variables to be defined as well for config values
 export default {
+  db_file: getEnv('BOT_DB_FILE', 'db.json'),
   token: getEnv('BOT_DISCORD_TOKEN'),
   app_id: getEnv('BOT_DISCORD_APP_ID'),
   guild_id: getEnv('BOT_DISCORD_GUILD_ID'),
