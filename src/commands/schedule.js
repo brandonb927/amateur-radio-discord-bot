@@ -30,7 +30,7 @@ export default {
             .setRequired(true)
         )
         .addStringOption((option) =>
-          option.setName('cron').setDescription(descriptionCronSyntax).setRequired(true)
+          option.setName('schedule').setDescription(descriptionCronSyntax).setRequired(true)
         )
         .addStringOption((option) =>
           option
@@ -121,7 +121,7 @@ async function handleScheduleList(interaction) {
  */
 async function handleScheduleNew(interaction) {
   const channel = interaction.options.getChannel('channel');
-  const schedule = interaction.options.getString('cron');
+  const schedule = interaction.options.getString('schedule');
   const message = interaction.options.getString('message');
 
   try {
