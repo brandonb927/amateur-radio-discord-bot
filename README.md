@@ -28,12 +28,14 @@ docker pull ghcr.io/brandonb927/amateur-radio-discord-bot:latest
 1. Copy `example.env` to `.env`. If you're running the docker container, define the same environment variables in your runtime environment as those found in `example.env`.
 1. Run `npm run start`
 
+    NOTE: The first time you run this you will need to generate the invitation link for the bot to join your server. Run the above command with the prefix: `FIRST_TIME_INVITE=1 npm run start`
+
 ## Available commands
 
 Run `?help` to print out information on how to use the bot.
 
 ## Contributing
 
-1. Run `npm run start:dev` to have the bot code refresh when changes are made
+Follow the installation steps above but run `npm run start:dev` to have the bot code refresh when changes are made.
 
 Build the docker image with: `docker build -t amateur-radio-discord-bot .` and run it with `docker run --env-file .env amateur-radio-discord-bot`
