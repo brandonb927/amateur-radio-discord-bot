@@ -3,7 +3,7 @@ import { CronTime } from 'cron';
 import cronstrue from 'cronstrue';
 import { markdownTable } from 'markdown-table';
 import { db, getNextTableId } from '../utils/db.js';
-import { hasRole } from '../utils/hasRole.js';
+import { hasRole, Role } from '../utils/roles.js';
 import { loadScheduledMessages } from '../utils/scheduledMessages.js';
 
 const descriptionCronSyntax =
@@ -56,20 +56,20 @@ export default {
   async execute(interaction) {
     switch (interaction.options.getSubcommand()) {
       case 'list':
-        if (!hasRole(interaction.member, 'Bot Admin')) break;
+        if (!hasRole(interaction.member, Role.BOT_ADMIN)) break;
         return await handleScheduleList(interaction);
       case 'new':
-        if (!hasRole(interaction.member, 'Bot Admin')) break;
+        if (!hasRole(interaction.member, Role.BOT_ADMIN)) break;
         return await handleScheduleNew(interaction);
       case 'remove':
-        if (!hasRole(interaction.member, 'Bot Admin')) break;
+        if (!hasRole(interaction.member, Role.BOT_ADMIN)) break;
         return await handleScheduleRemove(interaction);
       default:
         break;
     }
 
     return await interaction.reply({
-      content: 'You must have `Bot Admin` role to use this command',
+      content: `You must have '${Role.BOT_ADMIN}' role to use this command`,
     });
   },
 };
