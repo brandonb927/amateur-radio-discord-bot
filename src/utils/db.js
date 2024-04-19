@@ -1,10 +1,11 @@
 import { JSONFilePreset } from 'lowdb/node';
+import config from './config.js';
 
 const defaultData = {
-  notifications: [],
+  scheduledMessages: [],
 };
 
-export const db = await JSONFilePreset('db.json', defaultData);
+export const db = await JSONFilePreset(`db/${config.db_file}`, defaultData);
 
 /**
  * Returns the next usable id in the given table by getting the greatest
