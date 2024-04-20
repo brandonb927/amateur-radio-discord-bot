@@ -37,6 +37,6 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ IMAGE_NAME }}:latest
-            ${{ IMAGE_NAME }}:${{ steps.short_sha.outputs.SHORT_SHA }}
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ steps.short_sha.outputs.SHORT_SHA }}
 
