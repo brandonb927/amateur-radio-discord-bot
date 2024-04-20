@@ -15,6 +15,6 @@ export const db = await JSONFilePreset(`db/${config.db_file}`, defaultData);
  * @returns {number}
  */
 export const getNextTableId = (table) =>
-  (table &&
+  (table.length &&
     table.reduce((prev, current) => (prev && prev.id > current.id ? prev : current)).id + 1) ||
   1;
