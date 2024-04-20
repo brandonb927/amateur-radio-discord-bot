@@ -14,8 +14,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build and publish a Docker image for ${{ github.repository }}
+      - name: Set short SHA
+        id: short_sha
+        run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Build and publish a Docker ${{ steps.short_sha.outputs.SHORT_SHA }} image for ${{ github.repository }}
         uses: macbre/push-to-ghcr@master
         with:
-          image_name: ${{ github.repository }} # it will be lowercased internally
+          image_name: ${{ github.repository }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          image_tag: ${{ steps.short_sha.outputs.SHORT_SHA }}
+
+      - name: Build and publish a Docker latest image for ${{ github.repository }}
+        uses: macbre/push-to-ghcr@master
+        with:
+          image_name: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
