@@ -1,7 +1,10 @@
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { Client, Collection, REST, Routes } from 'discord.js';
-import config from './utils/config.js';
+import {
+  Client,
+  // Collection, REST, Routes
+} from 'discord.js';
+// import config from './utils/config.js';
 
 const __dirname = import.meta.dirname;
 
