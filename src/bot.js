@@ -1,6 +1,14 @@
+import * as Sentry from '@sentry/node';
 import { Client, GatewayIntentBits } from 'discord.js';
 import config from './utils/config.js';
 import { loadCommands } from './loadCommands.js';
+
+if (config.sentry_dsn) {
+  Sentry.init({
+    dsn: config.sentry_dsn,
+    environment: config.sentry_env,
+  });
+}
 
 let client = new Client({
   intents: [

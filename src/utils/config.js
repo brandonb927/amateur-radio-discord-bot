@@ -32,4 +32,6 @@ export default {
     'BOT_USER_AGENT',
     'amateur-radio-discord-bot v1 (+https://github.com/brandonb927/amateur-radio-discord-bot)'
   ),
+  sentry_dsn: getEnv('BOT_SENTRY_DSN', false),
+  sentry_env: getEnv('BOT_SENTRY_ENVIRONMENT', 'local'),
 };
