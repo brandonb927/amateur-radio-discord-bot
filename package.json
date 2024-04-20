@@ -24,13 +24,9 @@
   "author": "Brandon Brown",
   "license": "ISC",
   "dependencies": {
-    "cron": "^3.1.7",
-    "cronstrue": "^2.49.0",
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
-    "got": "^14.2.1",
-    "lowdb": "^7.0.1",
-    "markdown-table": "^3.0.3"
+    "got": "^14.2.1"
   },
   "devDependencies": {
     "eslint": "^9.1.0",
