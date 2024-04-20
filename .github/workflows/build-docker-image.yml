@@ -6,7 +6,7 @@ on:
       - 'main'
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.actor }}/${{ github.repository }}
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
   build_and_push:
