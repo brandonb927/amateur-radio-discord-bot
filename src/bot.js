@@ -8,6 +8,7 @@ if (config.sentry_dsn) {
     dsn: config.sentry_dsn,
     environment: config.sentry_env,
   });
+  console.log(`Connected to Sentry.io`);
 }
 
 let client = new Client({
