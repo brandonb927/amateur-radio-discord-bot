@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import config from './utils/config.js';
-// import { loadCommands } from './loadCommands.js';
+import { loadCommands } from './loadCommands.js';
 
 let client = new Client({
   intents: [
@@ -10,6 +10,6 @@ let client = new Client({
   ],
 });
 
-// client = await loadCommands(client);
+client = await loadCommands(client);
 
 client.login(config.token);
