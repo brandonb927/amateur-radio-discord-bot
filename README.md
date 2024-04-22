@@ -23,7 +23,7 @@ docker pull ghcr.io/brandonb927/amateur-radio-discord-bot:latest
 
 1. [Follow the guide here for creating your bot](https://anidiots.guide/getting-started/getting-started-long-version)
 1. Clone this repository locally
-1. Install [`asdf`](https://github.com/asdf-vm/asdf/) with the [`asdf-nodejs`](https://github.com/asdf-vm/asdf-nodejs) plugin (or run ensure the version of node in the `.tool-versions` is available to you)
+1. Install [`asdf`](https://github.com/asdf-vm/asdf/) with the [`asdf-nodejs`](https://github.com/asdf-vm/asdf-nodejs) plugin (ensure the version of node in the `.tool-versions` is available to you)
 1. Install dependencies with `npm ci`
 1. Copy `example.env` to `.env`. If you're running the docker container, define the same environment variables in your runtime environment as those found in `example.env`.
 1. Run `npm run start`
