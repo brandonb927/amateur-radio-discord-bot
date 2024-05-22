@@ -24,15 +24,15 @@
   "author": "Brandon Brown",
   "license": "ISC",
   "dependencies": {
-    "@sentry/node": "^7.111.0",
-    "discord.js": "^14.14.1",
+    "@sentry/node": "^8.3.0",
+    "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",
-    "got": "^14.2.1"
+    "got": "^14.3.0"
   },
   "devDependencies": {
-    "eslint": "^9.1.0",
+    "eslint": "^9.3.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-jsdoc": "^48.2.3",
+    "eslint-plugin-jsdoc": "^48.2.5",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5"
   }
