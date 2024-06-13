@@ -55,6 +55,10 @@ jobs:
         id: short_sha
         run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
+      - name: TESTING
+        run: |
+          curl https://git.brandonb.ca
+
       - name: Log in to Gitea CR
         uses: docker/login-action@v3
         with:
