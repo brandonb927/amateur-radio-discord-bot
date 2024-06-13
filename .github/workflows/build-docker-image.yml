@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: ${{ env.PUSH_TO_GITEA != 'true' }}
+    if: ${{ vars.PUSH_TO_GITEA != 'true' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -47,7 +47,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: ${{ env.PUSH_TO_GITEA == 'true' }}
+    if: ${{ vars.PUSH_TO_GITEA == 'true' }}
     steps:
       - uses: actions/checkout@v4
 
