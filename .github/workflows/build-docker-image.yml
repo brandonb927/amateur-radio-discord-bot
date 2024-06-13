@@ -7,7 +7,7 @@ on:
 
 env:
   GHCR_IMAGE_NAME: ghcr.io/${{ github.repository }}
-  GITEA_IMAGE_NAME: ${{ secrets.IMAGE_HOSTNAME }}/${{ github.repository }}
+  GITEA_IMAGE_NAME: ${{ vars.IMAGE_HOSTNAME }}/${{ github.repository }}
 
 jobs:
   build_and_push_to_ghcr:
@@ -58,7 +58,7 @@ jobs:
       - name: Log in to Gitea CR
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.IMAGE_HOSTNAME }}
+          registry: ${{ vars.IMAGE_HOSTNAME }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
