@@ -57,7 +57,6 @@ jobs:
 
       - name: TESTING
         run: |
-          nslookup git.brandonb.ca
           dig git.brandonb.ca
           curl -L git.brandonb.ca
 
